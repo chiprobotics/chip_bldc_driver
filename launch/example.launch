@@ -1,0 +1,10 @@
+<launch>
+<!-- launch a single instance of the motor controller -->
+
+  <arg name="port" default="/dev/ttyUSB0" />
+  <node pkg="chip_bldc_driver" type="bldc_driver_node" name="bldc_driver_node" output="screen">
+    <param name="port" value="$(arg port)" />
+    <param name="value" value="115200" />
+  </node>
+
+</launch>
