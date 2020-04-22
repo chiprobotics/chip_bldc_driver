@@ -26,9 +26,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 int main(int argc, char *argv[])
 {
   ros::init(argc, argv, "bldc_driver_node");
+  ros::NodeHandle nh("~");
 
   std::string port = "/dev/ttyUSB0";
   int32_t baud = 115200;
+  nh.param<std::string>("port", port, port);
 
   bldc_serial::BldcSerial serial(port.c_str(), baud);
   
