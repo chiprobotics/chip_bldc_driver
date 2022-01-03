@@ -31,7 +31,7 @@ namespace bldc_controller
 BldcController::BldcController(bldc_serial::BldcSerial *s) : serial(s),
                                                              nh_("~")
 {
-  sub_cmd_ = nh_.subscribe("/bldc_driver_node/Command", 1, &BldcController::motorCommand, this);
+  sub_cmd_ = nh_.subscribe("motor_command", 1, &BldcController::motorCommand, this);
   timeout_timer_ = nh_.createTimer(ros::Duration(2), &BldcController::timeoutCallback, this);
   timeout_timer_.start();
 }
