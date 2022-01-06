@@ -30,11 +30,7 @@ namespace bldc_serial
 /**
   * Constructs
   */
-BldcSerial::BldcSerial(const char *port, int baud) : port_(port),
-                                                     baud_(baud),
-                                                     serial_(nullptr),
-                                                     nh_("~")
-{
+BldcSerial::BldcSerial(const char *port, int baud) : port_(port), baud_(baud), serial_(nullptr), nh_("~"){
   pub_status_ = nh_.advertise<chip_bldc_driver::Status>("status", 1);
   pub_feedback_ = nh_.advertise<chip_bldc_driver::Feedback>("feedback", 1);
 }
@@ -136,6 +132,60 @@ void BldcSerial::sendMotorCommand(int16_t motor_speed_cmd)
 
   write(message, msg_len);
 }
+
+/**
+   * Transmit motor PID Parameters command through serial
+   * 
+   * @param motor_PID_Values Motor PID values. Should be within the [0, 65535] range, otherwise it's ignored
+*/
+void BldcSerial::Send_KP(  uint16_t motor_kp_value){
+
+  constexpr int32_t MAX_CMD = 65535;
+  constexpr int32_t MIN_CMD = 0;
+  if (motor_kp_value < MIN_CMD || motor_kp_value > MAX_CMD)
+  {
+    ROS_WARN("The motor KP command %i exceed the range [%i, %i].", motor_kp_value, MIN_CMD, MAX_CMD);
+    return;
+  }
+  
+  constexpr int32_t MSG_SIZE = 16;
+  char message[MSG_SIZE];
+  int32_t msg_len = sprintf(message, "$!MKP:%d\r\n", motor_kp_value);
+  write(message, msg_len);
+  ROS_INFO("Motor KP value updated "); 
+}
+void BldcSerial::Send_KI(  uint16_t motor_ki_value){
+  constexpr int32_t MAX_CMD = 65535;
+  constexpr int32_t MIN_CMD = 0;
+  constexpr int32_t MSG_SIZE = 16;
+  if (motor_ki_value < MIN_CMD || motor_ki_value > MAX_CMD)
+  {
+    ROS_WARN("The motor KI command %i exceed the range [%i, %i].", motor_ki_value, MIN_CMD, MAX_CMD);
+    return;
+  }
+  
+  char message[MSG_SIZE];
+  int32_t msg_len = sprintf(message, "$!MKI:%d\r\n", motor_ki_value);
+  write(message, msg_len);
+  ROS_INFO("Motor KI value updated "); 
+}
+void BldcSerial::Send_KD(  uint16_t motor_kd_value){
+  
+  constexpr int32_t MAX_CMD = 65535;
+  constexpr int32_t MIN_CMD = 0;
+  constexpr int32_t MSG_SIZE = 16;
+  if (motor_kd_value < MIN_CMD || motor_kd_value > MAX_CMD)
+  {
+    ROS_WARN("The motor KD command %i exceed the range [%i, %i].", motor_kd_value, MIN_CMD, MAX_CMD);
+    return;
+  }
+
+  char message[MSG_SIZE];
+  int32_t msg_len = sprintf(message, "$!MKD:%d\r\n", motor_kd_value);
+  write(message, msg_len);
+  ROS_INFO("Motor KD value updated "); 
+}
+
 
 /**
    * Processes the status message and prints it
