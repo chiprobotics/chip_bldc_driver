@@ -1,0 +1,18 @@
+<launch>
+
+  <node pkg="chip_bldc_driver" type="bldc_driver_node_left" name="motor_left" output="screen">
+    <param name="~port" value="/dev/motorLeft"/>
+    <param name="~baud" value="115200" />
+  </node>
+
+
+  <node pkg="chip_bldc_driver" type="bldc_driver_node_right" name="motor_right" output="screen">
+    <param name="~port" value="/dev/motorRight"/>
+    <param name="~baud" value="115200" />
+  </node>
+
+
+  <!-- <node pkg="differential_drive" type="twist_to_motors.py" name="d" output="screen"></node> -->
+
+
+</launch>
